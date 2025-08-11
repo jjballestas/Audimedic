@@ -1,0 +1,51 @@
+﻿## Archivos y carpetas de Visual Studio
+.vs/
+*.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Binarios de compilación
+bin/
+obj/
+Debug/
+Release/
+[Bb]uild/
+[Bb]uildArtifacts/
+
+## Archivos temporales de usuario
+*.tmp
+*.temp
+*.log
+
+## Configuración local
+appsettings.Development.json
+appsettings.Local.json
+
+## Archivos generados por VS
+*.vsidx
+*.dbmdl
+*.pdb
+*.cache
+*.config
+*.csproj.user
+
+## SQL Server (bases de datos locales)
+*.mdf
+*.ldf
+*.ndf
+
+## Paquetes NuGet
+*.nupkg
+*.snupkg
+packages/
+*.nuspec
+
+## Archivos de migración temporales
+Migrations/
+
+## Archivos del sistema
+Thumbs.db
+ehthumbs.db
+.DS_Store

@@ -1,0 +1,13 @@
+﻿namespace Audimedic_Backend.Data
+{
+    using Audimedic_Backend.Enums;
+
+    public class Entidad
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = null!;
+        public TipoEntidad TipoEntidad { get; set; }
+        public ICollection<MedicoEntidad> Medicos { get; set; } = new List<MedicoEntidad>();
+        public ICollection<HistoriaClinica> Historias { get; set; } = new List<HistoriaClinica>();
+    }
+}
