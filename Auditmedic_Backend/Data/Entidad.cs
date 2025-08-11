@@ -8,6 +8,7 @@
         public string Nombre { get; set; } = null!;
         public TipoEntidad TipoEntidad { get; set; }
         public ICollection<MedicoEntidad> Medicos { get; set; } = new List<MedicoEntidad>();
-        public ICollection<HistoriaClinica> Historias { get; set; } = new List<HistoriaClinica>();
+        public ICollection<HistoriaCompartida> HistoriasCompartidas { get; set; } = new List<HistoriaCompartida>();
+        
     }
 }

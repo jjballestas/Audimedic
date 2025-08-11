@@ -6,8 +6,8 @@ namespace Audimedic_Backend.Data
     {
         public int Id { get; set; }
 
-        public int HistoriaClinicaId { get; set; }
-        public HistoriaClinica HistoriaClinica { get; set; } = null!;
+        public int HistoriaClinicaMedicoId { get; set; }
+        public HistoriaClinicaMedico HistoriaClinicaMedico { get; set; } = null!;
 
         public int ProcedimientoId { get; set; }
         public Procedimiento Procedimiento { get; set; } = null!;

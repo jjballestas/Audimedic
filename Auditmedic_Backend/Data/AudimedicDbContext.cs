@@ -16,7 +16,14 @@ namespace Audimedic_Backend.Data
         // Users
         public DbSet<Entidad> Entidades => Set<Entidad>();
         public DbSet<Medico> Medicos => Set<Medico>();
-        public DbSet<HistoriaClinica> HistoriasClinicas => Set<HistoriaClinica>();
+        
+
+        public DbSet<HistoriaCompartida> HistoriasCompartidas => Set<HistoriaCompartida>();
+        public DbSet<ArchivoHistoriaClinica> ArchivosHistoriasClinicas => Set<ArchivoHistoriaClinica>(); 
+        public DbSet<HistoriaClinicaMedico> HistoriasClinicasMedico => Set<HistoriaClinicaMedico>();
+
+
+
         public DbSet<ProcedimientoHistoria> ProcedimientosHistoria => Set<ProcedimientoHistoria>();
 
         // Contratos
@@ -28,7 +35,8 @@ namespace Audimedic_Backend.Data
         public DbSet<Procedimiento> Procedimientos => Set<Procedimiento>();
         public DbSet<TarifaSOAT> TarifasSOAT => Set<TarifaSOAT>();
         public DbSet<UVB> UVB => Set<UVB>();
-
+        public DbSet<Factura> Facturas => Set<Factura>();
+        public DbSet<FacturaLinea> FacturasLineas => Set<FacturaLinea>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // ======== Esquemas ========
@@ -40,7 +48,13 @@ namespace Audimedic_Backend.Data
             // Users
             modelBuilder.Entity<Entidad>().ToTable("Entidades", "users");
             modelBuilder.Entity<Medico>().ToTable("Medicos", "users");
-            modelBuilder.Entity<HistoriaClinica>().ToTable("HistoriasClinicas", "users");
+         
+           
+
+            modelBuilder.Entity<HistoriaCompartida>().ToTable("HistoriasCompartidas", "users");
+            modelBuilder.Entity<ArchivoHistoriaClinica>().ToTable("ArchivosHistoriasClinicas", "users");
+            modelBuilder.Entity<HistoriaClinicaMedico>().ToTable("HistoriasClinicasMedico", "users");
+
             modelBuilder.Entity<ProcedimientoHistoria>().ToTable("ProcedimientosHistoria", "users");
 
             // Contratos
@@ -53,7 +67,26 @@ namespace Audimedic_Backend.Data
             modelBuilder.Entity<TarifaSOAT>().ToTable("TarifasSOAT", "catalogo");
             modelBuilder.Entity<UVB>().ToTable("UVB", "catalogo");
 
+
+            // Tablas y esquemas
+            modelBuilder.Entity<Factura>().ToTable("Facturas", "users");
+            modelBuilder.Entity<FacturaLinea>().ToTable("FacturasLineas", "users");
+
+
+            // Índice único: una historia compartida por Entidad + Numero
+            modelBuilder.Entity<HistoriaCompartida>()
+                .HasIndex(h => new { h.EntidadId, h.NumeroHistoria })
+                .IsUnique();
+
             // ======== Relaciones ========
+
+            modelBuilder.Entity<HistoriaCompartida>()
+            .HasOne(h => h.Entidad)
+            .WithMany(e => e.HistoriasCompartidas)
+            .HasForeignKey(h => h.EntidadId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+
             modelBuilder.Entity<Usuario>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
@@ -83,9 +116,7 @@ namespace Audimedic_Backend.Data
                 .WithMany(me => me.Contratos)
                 .HasForeignKey(c => c.MedicoEntidadId);
 
-            modelBuilder.Entity<Contrato>()
-                .Property(c => c.PorcentajeAjuste)
-                .HasColumnType("decimal(18,4)");
+           
 
             modelBuilder.Entity<TarifaContrato>()
                 .HasOne(tc => tc.Contrato)
@@ -97,34 +128,23 @@ namespace Audimedic_Backend.Data
                 .WithMany(p => p.TarifasContrato)
                 .HasForeignKey(tc => tc.ProcedimientoId);
 
-            modelBuilder.Entity<TarifaContrato>()
-            .Property(trfc => trfc.FactorPorcentaje)
-            .HasColumnType("decimal(18,2)");
 
             modelBuilder.Entity<TarifaSOAT>()
                 .HasOne(ts => ts.Procedimiento)
                 .WithMany(p => p.TarifasSOAT)
                 .HasForeignKey(ts => ts.ProcedimientoId);
-
-            modelBuilder.Entity<TarifaSOAT>()
-            .Property(t => t.Valor)
-            .HasColumnType("decimal(18,2)");
-
-
-            modelBuilder.Entity<HistoriaClinica>()
-                .HasOne(h => h.Medico)
-                .WithMany(m => m.Historias)
-                .HasForeignKey(h => h.MedicoId);
+            
+            modelBuilder.Entity<ArchivoHistoriaClinica>()
+            .HasOne(a => a.HistoriaCompartida)
+            .WithMany(h => h.Archivos)
+            .HasForeignKey(a => a.HistoriaCompartidaId);
 
 
+             
 
-            modelBuilder.Entity<HistoriaClinica>()
-            .HasOne(h => h.Entidad)
-            .WithMany(e => e.Historias)
-            .HasForeignKey(h => h.EntidadId)
-            .OnDelete(DeleteBehavior.SetNull);
-
-
+            modelBuilder.Entity<ArchivoHistoriaClinica>()
+            .Property(a => a.TipoArchivo)
+            .HasConversion<string>();
 
 
 
@@ -133,21 +153,65 @@ namespace Audimedic_Backend.Data
                 .HasIndex(p => p.CodigoCUPS)
                 .IsUnique();
 
+             
+
             modelBuilder.Entity<ProcedimientoHistoria>()
-                .HasOne(ph => ph.HistoriaClinica)
+                .HasOne(ph => ph.HistoriaClinicaMedico )
                 .WithMany(h => h.Procedimientos)
-                .HasForeignKey(ph => ph.HistoriaClinicaId);
+                .HasForeignKey(ph => ph.HistoriaClinicaMedicoId );
 
             modelBuilder.Entity<ProcedimientoHistoria>()
                 .HasOne(ph => ph.Procedimiento)
                 .WithMany()
                 .HasForeignKey(ph => ph.ProcedimientoId);
 
+          
+
+
+            modelBuilder.Entity<Factura>()
+            .HasOne(f => f.HistoriaClinicaMedico)
+            .WithMany(hm => hm.Facturas)
+            .HasForeignKey(f => f.HistoriaClinicaMedicoId);
+
+
+            modelBuilder.Entity<FacturaLinea>()
+                .HasOne(l => l.Factura)
+                .WithMany(f => f.Lineas)
+                .HasForeignKey(l => l.FacturaId);
+
+            modelBuilder.Entity<FacturaLinea>()
+                .HasOne(l => l.ProcedimientoHistoria)
+                .WithMany() // o .WithMany(h => h.Lineas) si agregas colec. inversa
+                .HasForeignKey(l => l.ProcedimientoHistoriaId);
+
+            modelBuilder.Entity<HistoriaClinicaMedico>()
+            .HasOne(hm => hm.HistoriaCompartida)
+            .WithMany(hc => hc.HistoriasMedico)
+            .HasForeignKey(hm => hm.HistoriaCompartidaId);
+
+            modelBuilder.Entity<HistoriaClinicaMedico>()
+            .HasOne(hm => hm.Medico)
+            .WithMany(m => m.Historias)
+            .HasForeignKey(hm => hm.MedicoId);
+
+
+ 
+
+
+
+
+            // Ajustes de dependientes
             modelBuilder.Entity<ProcedimientoHistoria>()
-            .Property(p => p.ValorCalculado)
-            .HasColumnType("decimal(18,2)");
+                .HasOne(ph => ph.HistoriaClinicaMedico)
+                .WithMany(hm => hm.Procedimientos)
+                .HasForeignKey(ph => ph.HistoriaClinicaMedicoId);
+
+            modelBuilder.Entity<ArchivoHistoriaClinica>()
+            .Property(a => a.TipoArchivo)
+            .HasConversion<string>();
 
 
+            #region Enums como texto
 
             // ======== Enums como texto ========
             modelBuilder.Entity<Entidad>()
@@ -158,13 +222,56 @@ namespace Audimedic_Backend.Data
                 .Property(c => c.ManualTarifario)
                 .HasConversion<string>();
 
-            modelBuilder.Entity<HistoriaClinica>()
-                .Property(h => h.Estado)
-                .HasConversion<string>();
+          
 
             modelBuilder.Entity<ProcedimientoHistoria>()
                 .Property(ph => ph.ViaQuirurgica)
                 .HasConversion<string>();
+
+            // Enums como texto
+            modelBuilder.Entity<Factura>()
+                .Property(f => f.Estado)
+                .HasConversion<string>();
+        #endregion
+
+            #region  precision de decimales
+
+
+            // Precisión decimales
+            modelBuilder.Entity<Factura>()
+                .Property(f => f.Total)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<FacturaLinea>()
+                .Property(l => l.ValorUnitario)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<FacturaLinea>()
+                .Property(l => l.PorcentajeAplicado)
+                .HasPrecision(18, 4);
+
+            modelBuilder.Entity<FacturaLinea>()
+                .Property(l => l.Subtotal)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ProcedimientoHistoria>()
+          .Property(p => p.ValorCalculado)
+          .HasColumnType("decimal(18,2)");
+
+
+            modelBuilder.Entity<TarifaContrato>()
+            .Property(trfc => trfc.FactorPorcentaje)
+            .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Contrato>()
+               .Property(c => c.PorcentajeAjuste)
+               .HasColumnType("decimal(18,4)");
+
+            modelBuilder.Entity<TarifaSOAT>()
+          .Property(t => t.Valor)
+          .HasColumnType("decimal(18,2)");
+
+            #endregion;
         }
     }
 }
