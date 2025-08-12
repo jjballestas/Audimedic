@@ -1,8 +1,13 @@
- 
+
+using Audimedic_Backend.Config;
 using Audimedic_Backend.Data;
-using Audimedic_Backend.Services;
+using Audimedic_Backend.Services; 
+using Audimedic_Backend.Services.Storage;
+using Audimedic_Backend.Services.Users;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens; 
+using Audimedic_Backend.Services.Historias;
+ 
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,16 +36,29 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddAuthorization();
 
-
-
-
-
-
-
-
-
+ 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+builder.Services.AddScoped<IHistoriaQueryService, HistoriaQueryService>();
+builder.Services.AddScoped<IProcesamientoHistoriaService, ProcesamientoHistoriaService>();
+
+builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection("Storage"));
+builder.Services.AddSingleton<IPrivateStorage, FileSystemPrivateStorage>();
+ 
+// NO registres StaticFiles para esa carpeta (no será pública).
+// app.UseStaticFiles(); // <- esto solo sirve wwwroot, no tu Storage.RootPath
+builder.Services.AddSingleton<IPrivateStorage, FileSystemPrivateStorage>(); builder.Services.AddSingleton<IPrivateStorage, FileSystemPrivateStorage>();
+// Opciones de storage (ruta relativa, p.ej. "App_Data/Storage")
+builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection("Storage"));
+// Storage privado (fuera de wwwroot)
+builder.Services.AddSingleton<IPrivateStorage, FileSystemPrivateStorage>();
+
+// Servicios de historias (query/processing si los usas) + upload
+builder.Services.AddScoped<IHistoriaUploadService, HistoriaUploadService>();
+
+
+
 
 var app = builder.Build();
 

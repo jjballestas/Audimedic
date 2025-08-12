@@ -177,4 +177,20 @@ git add .
 git commit -m "feat: describir cambio"
 git push origin feature/nombre-tarea
 # Abrir Pull Request
+
+
+
+
+
+13) Uso en tu servicio de upload (ejemplo)
+
+// relativeFolder = $"{codigoEntidad}/{numeroHistoria}"
+using var stream = archivo.OpenReadStream();
+var relativePath = await _storage.SaveAsync(stream, archivo.FileName, relativeFolder, ct);
+
+// Guardas relativePath en BD (p.ej. "HOSP001/HC-0001/20250812_...pdf")
+Para descargar:
+
+var physical = _storage.GetPhysicalPath(archivo.RutaArchivo);
+// stream = File.OpenRead(physical); return File(stream, contentType, nombre);
 ```

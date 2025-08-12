@@ -80,11 +80,16 @@ namespace Audimedic_Backend.Data
 
             // ======== Relaciones ========
 
+            
+
             modelBuilder.Entity<HistoriaCompartida>()
             .HasOne(h => h.Entidad)
             .WithMany(e => e.HistoriasCompartidas)
             .HasForeignKey(h => h.EntidadId)
             .OnDelete(DeleteBehavior.Restrict);
+
+
+
 
 
             modelBuilder.Entity<Usuario>()
@@ -134,13 +139,16 @@ namespace Audimedic_Backend.Data
                 .WithMany(p => p.TarifasSOAT)
                 .HasForeignKey(ts => ts.ProcedimientoId);
             
+            
+
+
             modelBuilder.Entity<ArchivoHistoriaClinica>()
             .HasOne(a => a.HistoriaCompartida)
             .WithMany(h => h.Archivos)
-            .HasForeignKey(a => a.HistoriaCompartidaId);
+            .HasForeignKey(a => a.HistoriaCompartidaId)
+            .OnDelete(DeleteBehavior.Cascade);
 
 
-             
 
             modelBuilder.Entity<ArchivoHistoriaClinica>()
             .Property(a => a.TipoArchivo)
@@ -166,45 +174,57 @@ namespace Audimedic_Backend.Data
                 .HasForeignKey(ph => ph.ProcedimientoId);
 
           
-
+             
 
             modelBuilder.Entity<Factura>()
             .HasOne(f => f.HistoriaClinicaMedico)
             .WithMany(hm => hm.Facturas)
-            .HasForeignKey(f => f.HistoriaClinicaMedicoId);
+            .HasForeignKey(f => f.HistoriaClinicaMedicoId)
+            .OnDelete(DeleteBehavior.Restrict);
 
 
             modelBuilder.Entity<FacturaLinea>()
-                .HasOne(l => l.Factura)
-                .WithMany(f => f.Lineas)
-                .HasForeignKey(l => l.FacturaId);
+            .HasOne(l => l.Factura)
+            .WithMany(f => f.Lineas)
+            .HasForeignKey(l => l.FacturaId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+
 
             modelBuilder.Entity<FacturaLinea>()
                 .HasOne(l => l.ProcedimientoHistoria)
-                .WithMany() // o .WithMany(h => h.Lineas) si agregas colec. inversa
-                .HasForeignKey(l => l.ProcedimientoHistoriaId);
+                .WithMany() // o navegación inversa si la tienes
+                .HasForeignKey(l => l.ProcedimientoHistoriaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+
 
             modelBuilder.Entity<HistoriaClinicaMedico>()
             .HasOne(hm => hm.HistoriaCompartida)
             .WithMany(hc => hc.HistoriasMedico)
-            .HasForeignKey(hm => hm.HistoriaCompartidaId);
+            .HasForeignKey(hm => hm.HistoriaCompartidaId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+
 
             modelBuilder.Entity<HistoriaClinicaMedico>()
             .HasOne(hm => hm.Medico)
             .WithMany(m => m.Historias)
-            .HasForeignKey(hm => hm.MedicoId);
+            .HasForeignKey(hm => hm.MedicoId)
+            .OnDelete(DeleteBehavior.Restrict);
 
 
  
+             
 
 
-
-
-            // Ajustes de dependientes
             modelBuilder.Entity<ProcedimientoHistoria>()
-                .HasOne(ph => ph.HistoriaClinicaMedico)
-                .WithMany(hm => hm.Procedimientos)
-                .HasForeignKey(ph => ph.HistoriaClinicaMedicoId);
+            .HasOne(ph => ph.HistoriaClinicaMedico)
+            .WithMany(hm => hm.Procedimientos)
+            .HasForeignKey(ph => ph.HistoriaClinicaMedicoId)
+            .OnDelete(DeleteBehavior.Restrict);
+
 
             modelBuilder.Entity<ArchivoHistoriaClinica>()
             .Property(a => a.TipoArchivo)
@@ -270,6 +290,15 @@ namespace Audimedic_Backend.Data
             modelBuilder.Entity<TarifaSOAT>()
           .Property(t => t.Valor)
           .HasColumnType("decimal(18,2)");
+
+
+            modelBuilder.Entity<TarifaContrato>()
+            .Property(t => t.ValorFijo)
+            .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<ProcedimientoHistoria>()
+            .Property(p => p.UVB)
+            .HasColumnType("decimal(18,2)");
 
             #endregion;
         }

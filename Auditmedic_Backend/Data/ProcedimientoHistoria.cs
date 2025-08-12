@@ -18,6 +18,7 @@ namespace Audimedic_Backend.Data
         public bool Bilateral { get; set; } = false;     // si aplica bilateralidad
 
         public ViaQuirurgica ViaQuirurgica { get; set; } = ViaQuirurgica.Misma;
+        public decimal UVB { get; set; } // Valor base del procedimiento (SOAT o ISS)
         public decimal? ValorCalculado { get; set; } // resultado de liquidación (persistimos para auditoría)
     }
 }

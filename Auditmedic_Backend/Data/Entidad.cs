@@ -5,6 +5,7 @@
     public class Entidad
     {
         public int Id { get; set; }
+        public string Codigo { get; set; } = "";
         public string Nombre { get; set; } = null!;
         public TipoEntidad TipoEntidad { get; set; }
         public ICollection<MedicoEntidad> Medicos { get; set; } = new List<MedicoEntidad>();

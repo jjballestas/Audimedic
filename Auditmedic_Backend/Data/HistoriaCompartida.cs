@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public string NumeroHistoria { get; set; } = null!;
-
+        public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
         public int EntidadId { get; set; }
         public Entidad Entidad { get; set; } = null!;
 
