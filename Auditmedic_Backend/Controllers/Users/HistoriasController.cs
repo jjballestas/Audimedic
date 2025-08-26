@@ -9,8 +9,12 @@ using Microsoft.EntityFrameworkCore;
 namespace Audimedic_Backend.Controllers.Users
 {
     [ApiController]
-    [Route("api/users/historias")]
+     
     [Authorize]
+ 
+    [Route("api/users/historias")]
+    [ApiExplorerSettings(GroupName = "users-v1")]     // 👈 clave para enrutarlos al doc Users
+    [Tags("Historias (Users)")]
     public class HistoriasController : ControllerBase
     {
         private readonly IHistoriaUploadService _uploadService;

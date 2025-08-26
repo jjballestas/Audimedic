@@ -1,4 +1,4 @@
-﻿namespace Audimedic_Backend.Data
+﻿namespace Audimedic_Backend.Security
 {
     public class Rol
     {

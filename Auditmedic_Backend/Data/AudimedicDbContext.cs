@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Audimedic_Backend.Enums;
+using Audimedic_Backend.Security;
 
 namespace Audimedic_Backend.Data
 {
@@ -229,6 +230,12 @@ namespace Audimedic_Backend.Data
             modelBuilder.Entity<ArchivoHistoriaClinica>()
             .Property(a => a.TipoArchivo)
             .HasConversion<string>();
+
+
+            modelBuilder.Entity<Entidad>()
+            .ToTable("Entidades", "users")
+            .HasIndex(e => e.Codigo)
+            .IsUnique();
 
 
             #region Enums como texto

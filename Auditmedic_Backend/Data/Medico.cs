@@ -1,4 +1,6 @@
-﻿namespace Audimedic_Backend.Data
+﻿using Audimedic_Backend.Security;
+
+namespace Audimedic_Backend.Data
 {
     public class Medico
     {

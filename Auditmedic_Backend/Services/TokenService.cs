@@ -1,13 +1,13 @@
 ﻿namespace Audimedic_Backend.Services
 {
-    using Audimedic_Backend.Data; 
+    using Audimedic_Backend.Security;
     using Microsoft.IdentityModel.Tokens;
     using System.IdentityModel.Tokens.Jwt;
     using System.Security.Claims;
     using System.Text;
 
-    
-        public class TokenService : ITokenService
+
+    public class TokenService : ITokenService
         {
             private readonly IConfiguration _config;
 

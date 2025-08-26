@@ -1,6 +1,7 @@
-﻿using static Audimedic_Backend.Data.AudimedicDbContext;
+﻿using Audimedic_Backend.Data;
+using static Audimedic_Backend.Data.AudimedicDbContext;
 
-namespace Audimedic_Backend.Data
+namespace Audimedic_Backend.Security
 {
     public class Usuario
     {

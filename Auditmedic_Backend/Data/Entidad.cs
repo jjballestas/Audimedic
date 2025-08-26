@@ -1,7 +1,11 @@
-﻿namespace Audimedic_Backend.Data
+﻿
+using Audimedic_Backend.Enums;
+using Microsoft.EntityFrameworkCore;
+namespace Audimedic_Backend.Data
 {
-    using Audimedic_Backend.Enums;
+   
 
+    [Index(nameof(Codigo), IsUnique = true)]
     public class Entidad
     {
         public int Id { get; set; }
