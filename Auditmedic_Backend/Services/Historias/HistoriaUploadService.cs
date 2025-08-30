@@ -29,7 +29,10 @@ namespace Audimedic_Backend.Services.Historias
 
             // 1) Buscar entidad por “código” (en este proyecto usamos Nombre como código visible)
             var entidad = await _db.Entidades
-                .FirstOrDefaultAsync(e => e.Nombre == dto.CodigoEntidad, ct);
+                .FirstOrDefaultAsync(e => e.Codigo.Trim().ToUpper() == dto.CodigoEntidad.Trim().ToUpper(), ct);
+
+             
+
             if (entidad == null)
                 throw new InvalidOperationException($"Entidad '{dto.CodigoEntidad}' no existe.");
 
